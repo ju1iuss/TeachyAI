@@ -1,0 +1,14 @@
+import { FormData } from '../tabs/ai';
+
+export type RootStackParamList = {
+  Main: undefined;
+  LessonResult: {
+    formData: FormData;
+  };
+};
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+} 
