@@ -1,4 +1,4 @@
-import { StyleSheet, View, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, Pressable, TextInput, Alert } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Link, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,17 +9,21 @@ import { supabase } from '../../lib/supabase';
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const signInWithEmail = async () => {
+  const signIn = async () => {
     setLoading(true);
-    console.log('Attempting to sign in with email:', email);
+    console.log('Attempting to sign in with:', identifier);
     
     try {
+      // Determine if the identifier is an email or phone number
+      const isEmail = identifier.includes('@');
+      const formattedPhone = isEmail ? null : formatPhoneNumber(identifier);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: isEmail ? identifier : `${formattedPhone}@phone.teachy.app`,
         password,
       });
 
@@ -29,7 +33,7 @@ export default function LoginScreen() {
           status: error.status,
           name: error.name
         });
-        alert(error.message);
+        Alert.alert(error.message);
         setLoading(false);
         return;
       }
@@ -41,10 +45,20 @@ export default function LoginScreen() {
       router.replace('/tabs');
     } catch (error) {
       console.error('Unexpected error during sign in:', error);
-      alert('Ein unerwarteter Fehler ist aufgetreten');
+      Alert.alert('Ein unerwarteter Fehler ist aufgetreten');
       setLoading(false);
-      return;
     }
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    // Remove all non-numeric characters
+    const cleaned = phone.replace(/\D/g, '');
+    
+    // Add German country code if not present
+    if (!cleaned.startsWith('49')) {
+      return `+49${cleaned}`;
+    }
+    return `+${cleaned}`;
   };
 
   return (
@@ -61,10 +75,11 @@ export default function LoginScreen() {
       <View style={styles.form}>
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="Email oder Telefonnummer"
+          value={identifier}
+          onChangeText={setIdentifier}
           autoCapitalize="none"
+          keyboardType="default"
         />
         <TextInput
           style={styles.input}
@@ -75,8 +90,8 @@ export default function LoginScreen() {
         />
 
         <Pressable 
-          style={styles.loginButton}
-          onPress={signInWithEmail}
+          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+          onPress={signIn}
           disabled={loading}
         >
           <Text style={styles.loginText}>
@@ -136,6 +151,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#666666',
   },
   loginText: {
     color: '#FFFFFF',

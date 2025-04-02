@@ -1,40 +1,49 @@
-import { StyleSheet, View, Pressable, Image } from 'react-native';
+import { StyleSheet, View, Pressable, Image, Dimensions } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Link, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { haptics } from '../../utils/haptics';
 
 export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const windowHeight = Dimensions.get('window').height;
+
+  const handleLogin = async () => {
+    await haptics.light();
+    router.push('/(auth)/login');
+  };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.languageContainer}>
-        <Text style={styles.languageText}>🇩🇪 DE</Text>
-      </View>
-
-      <View style={styles.contentContainer}>
+    <View style={styles.container}>
+      <View style={[styles.upperSection, { marginTop: -insets.top }]}>
         <Image 
-          source={require('../../assets/app.png')}
-          style={styles.appImage}
-          resizeMode="contain"
+          source={require('../../assets/screen.png')}
+          style={styles.backgroundImage}
+          resizeMode="cover"
         />
-        <Text style={styles.title}>Unterricht{'\n'}leicht gemacht</Text>
       </View>
 
-      <View style={styles.footer}>
-        <Pressable 
-          style={styles.getStartedButton}
-          onPress={() => router.push('/(onboarding)/goals')}
-        >
-          <Text style={styles.getStartedText}>Get Started</Text>
-        </Pressable>
+      <View style={styles.lowerSectionContainer}>
+        <View style={styles.lowerSection}>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>Dein idealer Unterricht,{'\n'}leicht gemacht.</Text>
+            <Text style={styles.subtitle}>Erstelle einzigartige Unterrichtsstunden{'\n'}mit modernster KI-Unterstützung</Text>
+          </View>
 
-        <View style={styles.signInContainer}>
-          <Text style={styles.signInText}>Bereits registriert? </Text>
-          <Link href="/(auth)/login" asChild>
-            <Text style={styles.signInLink}>Anmelden</Text>
-          </Link>
+          <Pressable 
+            style={styles.getStartedButton}
+            onPress={() => router.push('/(onboarding)/goals')}
+          >
+            <Text style={styles.getStartedText}>Jetzt starten</Text>
+          </Pressable>
+
+          <Pressable 
+            style={styles.loginButton}
+            onPress={handleLogin}
+          >
+            <Text style={styles.loginText}>Schon registriert? <Text style={styles.loginTextBold}>Login</Text></Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -44,65 +53,76 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
-  languageContainer: {
-    position: 'absolute',
-    top: 60,
-    right: 16,
+  upperSection: {
+    height: '85%',
+    overflow: 'hidden',
     zIndex: 1,
   },
-  languageText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  appImage: {
+  backgroundImage: {
     width: '100%',
-    height: 300,
-    marginBottom: 40,
+    height: '100%',
+  },
+  lowerSectionContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 2,
+  },
+  lowerSection: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 34,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  textContainer: {
+    marginBottom: 20,
   },
   title: {
-    fontSize: 40,
+    fontSize: 28,
     fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 48,
+    marginBottom: 12,
+    color: '#000000',
   },
-  footer: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
+  subtitle: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
   },
   getStartedButton: {
-    backgroundColor: '#000000',
+    backgroundColor: '#FFE5A5',
     borderRadius: 30,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 'auto',
+    marginBottom: 8,
   },
   getStartedText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 18,
     fontWeight: '600',
   },
-  signInContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  loginButton: {
     alignItems: 'center',
-    marginBottom: 20,
+    paddingVertical: 12,
   },
-  signInText: {
-    fontSize: 16,
-    color: '#000000',
+  loginText: {
+    fontSize: 14,
+    color: '#666666',
   },
-  signInLink: {
-    fontSize: 16,
-    color: '#000000',
+  loginTextBold: {
     fontWeight: '600',
+    color: '#000000',
   },
 }); 

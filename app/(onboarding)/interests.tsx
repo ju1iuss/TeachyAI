@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState, useRef, useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
+import { useOnboarding } from '../../contexts/onboarding';
 
 type Option = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -14,6 +15,7 @@ type Option = {
 export default function InterestsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { setSubjects } = useOnboarding();
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -40,20 +42,22 @@ export default function InterestsScreen() {
 
   const handleSelect = async (index: number) => {
     await Haptics.selectionAsync();
-    setSelectedOptions(prev => {
-      if (prev.includes(index)) {
-        return prev.filter(i => i !== index);
-      } else {
-        return [...prev, index];
-      }
-    });
+    const newSelection = selectedOptions.includes(index)
+      ? selectedOptions.filter(i => i !== index)
+      : [...selectedOptions, index];
+    
+    setSelectedOptions(newSelection);
+    
+    // Update subjects string after state update
+    const selectedSubjects = newSelection.map(i => options[i].text).join(' ');
+    setSubjects(selectedSubjects);
   };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Pressable 
         style={styles.backButton}
-        onPress={() => router.canGoBack() ? router.back() : router.push('/(onboarding)/experience')}
+        onPress={() => router.replace('/(onboarding)')}
       >
         <MaterialCommunityIcons name="arrow-left" size={24} color="black" />
       </Pressable>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Pressable, TextInput, ScrollView, Share, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, View, Image, Pressable, TextInput, ScrollView, Share, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
@@ -184,6 +184,10 @@ export default function AIScreen() {
     }
   };
   
+  const navigateToSettings = () => {
+    router.push('/screens/SettingsScreen');
+  };
+  
   // Render step content based on current step
   const renderStepContent = () => {
     switch(currentStep) {
@@ -343,8 +347,8 @@ export default function AIScreen() {
               <Pressable onPress={handleShare} hitSlop={10}>
                 <Icon name="share-variant" size={24} color="#000000" style={styles.headerIcon} />
               </Pressable>
-              <Pressable onPress={handleLogout} hitSlop={10}>
-                <Icon name="logout" size={24} color="#000000" />
+              <Pressable onPress={navigateToSettings} hitSlop={10}>
+                <Icon name="cog" size={24} color="#000000" />
               </Pressable>
             </View>
           </View>
@@ -449,7 +453,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     justifyContent: 'space-between',
-    paddingBottom: 24,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
   },
   welcomeContainer: {
     flex: 1,
@@ -457,6 +461,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+    marginBottom: 0,
   },
   welcomeImage: {
     width: '100%',
@@ -472,14 +477,15 @@ const styles = StyleSheet.create({
   welcomeFooter: {
     width: '100%',
     paddingHorizontal: 20,
+    marginBottom: Platform.OS === 'ios' ? 20 : 16,
   },
   generateButton: {
-    backgroundColor: '#000000',
-    width: '100%',
-    paddingVertical: 20,
-    alignItems: 'center',
+    backgroundColor: '#45B7D1',
+    borderRadius: 30,
+    height: 56,
     justifyContent: 'center',
-    borderRadius: 100,
+    alignItems: 'center',
+    marginTop: 16,
   },
   buttonText: {
     color: '#FFFFFF',
@@ -490,7 +496,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     paddingHorizontal: 16,
-    paddingBottom: 60,
+    paddingBottom: Platform.OS === 'ios' ? 180 : 160,
   },
   optionsTitle: {
     fontSize: 18,
@@ -594,14 +600,17 @@ const styles = StyleSheet.create({
   footerButtons: {
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 0,
+    bottom: Platform.OS === 'ios' ? 100 : 80,
     left: 0,
     right: 0,
-    minHeight: 100,
+    minHeight: 80,
     paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingTop: 16,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 16,
     backgroundColor: '#F5F5F5',
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    zIndex: 100,
   },
   buttonContainer: {
     flex: 1,

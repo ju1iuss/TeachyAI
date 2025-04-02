@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState, useRef, useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
+import { useOnboarding } from '../../contexts/onboarding';
 
 type Option = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -14,6 +15,7 @@ type Option = {
 export default function GoalsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { setHerausforderungen } = useOnboarding();
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -39,6 +41,7 @@ export default function GoalsScreen() {
   const handleSelect = async (index: number) => {
     await Haptics.selectionAsync();
     setSelectedOption(index);
+    setHerausforderungen(options[index].text);
   };
 
   // Check if step can continue
@@ -50,7 +53,7 @@ export default function GoalsScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <Pressable 
         style={styles.backButton}
-        onPress={() => router.canGoBack() ? router.back() : router.push('/(onboarding)')}
+        onPress={() => router.replace('/(onboarding)')}
       >
         <MaterialCommunityIcons name="arrow-left" size={24} color="black" />
       </Pressable>
@@ -101,7 +104,7 @@ export default function GoalsScreen() {
       <View style={styles.footer}>
         <Pressable 
           style={[
-            styles.continueButton,
+            styles.getStartedButton,
             !canContinue() && styles.continueButtonDisabled
           ]}
           onPress={() => canContinue() && router.push('/(onboarding)/experience')}
@@ -164,7 +167,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionButtonSelected: {
-    backgroundColor: '#000000',
+    backgroundColor: '#FFE5A5',
   },
   optionText: {
     fontSize: 16,
@@ -172,17 +175,19 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   optionTextSelected: {
-    color: '#FFFFFF',
+    color: '#000000',
   },
   footer: {
     paddingVertical: 20,
   },
-  continueButton: {
-    backgroundColor: '#000000',
+  getStartedButton: {
+    backgroundColor: '#FFE5A5',
     borderRadius: 30,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 'auto',
+    marginBottom: 8,
   },
   continueButtonDisabled: {
     backgroundColor: '#CCCCCC',

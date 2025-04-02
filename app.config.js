@@ -1,7 +1,7 @@
 module.exports = {
   expo: {
-    name: 'teachy',
-    slug: 'teachy',
+    name: 'TeachyAI',
+    slug: 'TeachyAI',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -14,7 +14,10 @@ module.exports = {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.teachy.app'
+      bundleIdentifier: 'com.teachy.app',
+      config: {
+        usesNonExemptEncryption: false
+      }
     },
     android: {
       adaptiveIcon: {
@@ -27,7 +30,8 @@ module.exports = {
       favicon: './assets/favicon.png'
     },
     plugins: [
-      'expo-router'
+      'expo-router',
+      'expo-secure-store'
     ],
     extra: {
       EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
@@ -36,7 +40,9 @@ module.exports = {
         projectId: "1aeb71e2-edfe-4a20-81b2-6490ed422973"
       }
     },
-    scheme: 'teachy',
-    newArchEnabled: true
+    scheme: 'teachyai',
+    experiments: {
+      tsconfigPaths: true
+    }
   }
 }; 
