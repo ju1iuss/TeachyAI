@@ -16,6 +16,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "julius_kopp@icloud.com",
+        "ascAppId": "6744023081",
+        "appleTeamId": "U7Z79PX8SC"
+      }
+    }
   }
 }

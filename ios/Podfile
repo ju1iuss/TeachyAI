@@ -7,23 +7,13 @@ podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties
 
 ENV['RCT_NEW_ARCH_ENABLED'] = podfile_properties['newArchEnabled'] == 'true' ? '1' : '0'
 ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
+ENV['NO_FLIPPER'] = "1"
 
-platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
+platform :ios, '15.1'
 install! 'cocoapods',
   :deterministic_uuids => false
 
 prepare_react_native_project!
-
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
-#
-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-# ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -49,20 +39,14 @@ target 'TeachyAI' do
     ]
   end
 
-  config = use_native_modules!(config_command)
+  config = use_native_modules!
 
   use_react_native!(
     :path => config[:reactNativePath],
-    :flipper_configuration => flipper_config,
     :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
-
-  target 'TeachyAITests' do
-    inherit! :complete
-    # Pods for testing
-  end
 
   post_install do |installer|
     react_native_post_install(
@@ -71,25 +55,21 @@ target 'TeachyAI' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
-    # Fix for Sentry and other pods
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-        config.build_settings['ENABLE_BITCODE'] = 'NO'
-        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+        # Set common build settings for all targets
+        config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+        config.build_settings['DEFINES_MODULE'] = 'YES'
+        config.build_settings['SWIFT_VERSION'] = '5.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
         
-        # Fix for Sentry allocator issues
-        if target.name.include?('Sentry')
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'SENTRY_NO_PROFILING=1'
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'SENTRY_NO_CRASH_REPORTING=1'
+        # Fix for expo-dev-menu-interface and other framework targets
+        if target.name == 'expo-dev-menu-interface' || (target.respond_to?(:product_type) && target.product_type == "com.apple.product-type.framework")
+          config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'NO'
+          config.build_settings['DEFINES_MODULE'] = 'YES'
+          config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
         end
-        
-        # Additional C++ settings
-        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
-        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
       end
     end
 
