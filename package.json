@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "node_modules/expo-router/entry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -20,7 +20,7 @@
     "@supabase/supabase-js": "^2.49.1",
     "dotenv": "^16.4.7",
     "eas-cli": "^16.1.0",
-    "expo": "~52.0.41",
+    "expo": "~52.0.46",
     "expo-av": "^15.0.2",
     "expo-constants": "~17.0.7",
     "expo-dev-client": "~5.0.16",
@@ -36,7 +36,7 @@
     "openai": "^4.28.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.8",
+    "react-native": "0.76.9",
     "react-native-dotenv": "^3.4.11",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-elements": "^3.4.3",
