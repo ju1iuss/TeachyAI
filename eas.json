@@ -13,6 +13,26 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "testflight": {
+      "autoIncrement": true,
+      "extends": "production",
+      "prebuildCommand": "./scripts/prepare-ios-build.sh",
+      "ios": {
+        "resourceClass": "m-medium",
+        "image": "latest",
+        "buildConfiguration": "Release",
+        "prebuildCommand": "./eas-hooks/prebuild.sh"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "fallback_value_for_build",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "fallback_value_for_build",
+        "EXPO_PUBLIC_DEEPSEEK_API_KEY": "fallback_value_for_build",
+        "CLERK_PUBLISHABLE_KEY": "fallback_value_for_build"
+      },
+      "cache": {
+        "key": "testflight-pods-v2"
+      }
     }
   },
   "submit": {
