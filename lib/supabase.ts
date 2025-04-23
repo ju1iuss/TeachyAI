@@ -2,14 +2,15 @@ import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import { errorLogger } from '../app/utils/errorLogger';
 import { env } from '../app/utils/env';
+import { FALLBACKS } from '../app/utils/env';
 
-// Debug environment variables in development
-if (__DEV__) {
-  console.log('Supabase Configuration:', {
-    URL: env.EXPO_PUBLIC_SUPABASE_URL ? `${env.EXPO_PUBLIC_SUPABASE_URL.substring(0, 12)}...` : 'Not set',
-    KEY: env.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set (hidden)' : 'Not set'
-  });
-}
+// Always log Supabase configuration, even in production to help debug TestFlight issues
+console.log('Supabase Configuration:', {
+  URL: env.EXPO_PUBLIC_SUPABASE_URL ? `${env.EXPO_PUBLIC_SUPABASE_URL.substring(0, 12)}...` : 'Not set',
+  KEY: env.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set (hidden)' : 'Not set',
+  isProd: !__DEV__,
+  isUsingFallback: env.EXPO_PUBLIC_SUPABASE_URL === FALLBACKS.SUPABASE_URL
+});
 
 // Create a Supabase client with fallback handling
 let supabaseClient;
@@ -53,8 +54,8 @@ try {
   // Create a fallback client that will show appropriate errors
   // We'll use the values from env.ts which should have hardcoded fallbacks
   supabaseClient = createClient(
-    env.EXPO_PUBLIC_SUPABASE_URL || 'https://gffrwhbajzndpplxyyxi.supabase.co', 
-    env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmZnJ3aGJhanpuZHBwbHh5eXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA0MTE1NTMsImV4cCI6MjAxNTk4NzU1M30.OoXqXGOI6uQVKDQ0ZEYxrRhHiBZhM5nDn7-9nIgNXCE',
+    env.EXPO_PUBLIC_SUPABASE_URL || 'https://ztsozincmaxgeqwgrbjw.supabase.co', 
+    env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0c296aW5jbWF4Z2Vxd2dyYmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIwNTUzMjIsImV4cCI6MjA1NzYzMTMyMn0.9cYtVb9z_wVmSAUz67zbT3e7WgOSZdC34yTKiCVIlA0',
     {
       auth: {
         persistSession: true,

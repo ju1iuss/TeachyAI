@@ -1,19 +1,17 @@
 import Constants from 'expo-constants';
 
 // Hardcoded fallback values for TestFlight and Production
-// IMPORTANT: Replace these with your actual values before building for production
-const FALLBACKS = {
-  SUPABASE_URL: "https://gffrwhbajzndpplxyyxi.supabase.co", // REPLACE WITH YOUR ACTUAL SUPABASE URL
-  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmZnJ3aGJhanpuZHBwbHh5eXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA0MTE1NTMsImV4cCI6MjAxNTk4NzU1M30.OoXqXGOI6uQVKDQ0ZEYxrRhHiBZhM5nDn7-9nIgNXCE", // REPLACE WITH YOUR ACTUAL ANON KEY
-  DEEPSEEK_API_KEY: "YOUR_DEEPSEEK_API_KEY", // Replace with actual key if needed
-  CLERK_PUBLISHABLE_KEY: "YOUR_CLERK_KEY" // Replace with actual key if needed 
+// These values work in TestFlight and production builds
+export const FALLBACKS = {
+  SUPABASE_URL: "https://ztsozincmaxgeqwgrbjw.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0c296aW5jbWF4Z2Vxd2dyYmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIwNTUzMjIsImV4cCI6MjA1NzYzMTMyMn0.9cYtVb9z_wVmSAUz67zbT3e7WgOSZdC34yTKiCVIlA0",
+  DEEPSEEK_API_KEY: "sk-a52b9d320b6b433da88ea1499d79f622",
 };
 
 export interface EnvVariables {
   EXPO_PUBLIC_SUPABASE_URL: string;
   EXPO_PUBLIC_SUPABASE_ANON_KEY: string;
   EXPO_PUBLIC_DEEPSEEK_API_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
 }
 
 function getEnvironmentVariables(): EnvVariables {
@@ -24,34 +22,33 @@ function getEnvironmentVariables(): EnvVariables {
     const processEnv = {
       EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
       EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
-      EXPO_PUBLIC_DEEPSEEK_API_KEY: process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY,
-      CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY
+      EXPO_PUBLIC_DEEPSEEK_API_KEY: process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY
     };
     
-    // 2. Try expo constants (this usually works in dev/testing)
+    // 2. Try expo constants (this works in all environments including TestFlight/App Store)
     const expoConfig = Constants.expoConfig?.extra || {};
     
-    // 3. Combine all sources with fallbacks
+    // 3. Combine all sources with fallbacks - prioritize Constants in production
+    const isProd = !__DEV__;
+    
     const env = {
       EXPO_PUBLIC_SUPABASE_URL: 
-        processEnv.EXPO_PUBLIC_SUPABASE_URL || 
+        (isProd ? expoConfig.EXPO_PUBLIC_SUPABASE_URL : processEnv.EXPO_PUBLIC_SUPABASE_URL) || 
         expoConfig.EXPO_PUBLIC_SUPABASE_URL || 
+        processEnv.EXPO_PUBLIC_SUPABASE_URL || 
         FALLBACKS.SUPABASE_URL,
       
       EXPO_PUBLIC_SUPABASE_ANON_KEY: 
-        processEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY || 
+        (isProd ? expoConfig.EXPO_PUBLIC_SUPABASE_ANON_KEY : processEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY) || 
         expoConfig.EXPO_PUBLIC_SUPABASE_ANON_KEY || 
+        processEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY || 
         FALLBACKS.SUPABASE_ANON_KEY,
       
       EXPO_PUBLIC_DEEPSEEK_API_KEY: 
-        processEnv.EXPO_PUBLIC_DEEPSEEK_API_KEY || 
+        (isProd ? expoConfig.EXPO_PUBLIC_DEEPSEEK_API_KEY : processEnv.EXPO_PUBLIC_DEEPSEEK_API_KEY) || 
         expoConfig.EXPO_PUBLIC_DEEPSEEK_API_KEY || 
-        FALLBACKS.DEEPSEEK_API_KEY,
-      
-      CLERK_PUBLISHABLE_KEY: 
-        processEnv.CLERK_PUBLISHABLE_KEY || 
-        expoConfig.CLERK_PUBLISHABLE_KEY || 
-        FALLBACKS.CLERK_PUBLISHABLE_KEY
+        processEnv.EXPO_PUBLIC_DEEPSEEK_API_KEY || 
+        FALLBACKS.DEEPSEEK_API_KEY
     };
     
     // In development, log missing variables
@@ -74,21 +71,20 @@ function getEnvironmentVariables(): EnvVariables {
     return {
       EXPO_PUBLIC_SUPABASE_URL: FALLBACKS.SUPABASE_URL,
       EXPO_PUBLIC_SUPABASE_ANON_KEY: FALLBACKS.SUPABASE_ANON_KEY,
-      EXPO_PUBLIC_DEEPSEEK_API_KEY: FALLBACKS.DEEPSEEK_API_KEY,
-      CLERK_PUBLISHABLE_KEY: FALLBACKS.CLERK_PUBLISHABLE_KEY
+      EXPO_PUBLIC_DEEPSEEK_API_KEY: FALLBACKS.DEEPSEEK_API_KEY
     };
   }
 }
 
 // Debug the environment variables in development
 const envVars = getEnvironmentVariables();
-if (__DEV__) {
-  console.log('Environment variables loaded:', {
-    SUPABASE_URL: envVars.EXPO_PUBLIC_SUPABASE_URL ? 'Set ✓' : 'Not set ✗',
-    SUPABASE_ANON_KEY: envVars.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set ✓' : 'Not set ✗',
-    DEEPSEEK_API_KEY: envVars.EXPO_PUBLIC_DEEPSEEK_API_KEY ? 'Set ✓' : 'Not set ✗',
-    CLERK_KEY: envVars.CLERK_PUBLISHABLE_KEY ? 'Set ✓' : 'Not set ✗'
-  });
-}
+// Always log environment vars to help debug TestFlight issues
+console.log('Environment variables loaded:', {
+  SUPABASE_URL: envVars.EXPO_PUBLIC_SUPABASE_URL ? 'Set ✓' : 'Not set ✗',
+  SUPABASE_ANON_KEY: envVars.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set ✓' : 'Not set ✗',
+  DEEPSEEK_API_KEY: envVars.EXPO_PUBLIC_DEEPSEEK_API_KEY ? 'Set ✓' : 'Not set ✗',
+  IS_PROD: !__DEV__,
+  IS_USING_FALLBACKS: envVars.EXPO_PUBLIC_SUPABASE_URL === FALLBACKS.SUPABASE_URL
+});
 
 export const env = envVars; 

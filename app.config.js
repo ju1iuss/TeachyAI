@@ -42,12 +42,11 @@ module.exports = {
       ]
     ],
     extra: {
-      // Set these in .env file locally or in the EAS build configuration
-      EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://gffrwhbajzndpplxyyxi.supabase.co',
-      EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmZnJ3aGJhanpuZHBwbHh5eXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA0MTE1NTMsImV4cCI6MjAxNTk4NzU1M30.OoXqXGOI6uQVKDQ0ZEYxrRhHiBZhM5nDn7-9nIgNXCE',
-      EXPO_PUBLIC_DEEPSEEK_API_KEY: process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY || 'YOUR_DEEPSEEK_API_KEY',
-      CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY || 'YOUR_CLERK_KEY',
-      CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || '',
+      // These values are crucial for TestFlight/Production builds
+      EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://ztsozincmaxgeqwgrbjw.supabase.co',
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0c296aW5jbWF4Z2Vxd2dyYmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIwNTUzMjIsImV4cCI6MjA1NzYzMTMyMn0.9cYtVb9z_wVmSAUz67zbT3e7WgOSZdC34yTKiCVIlA0',
+      EXPO_PUBLIC_DEEPSEEK_API_KEY: process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY || 'sk-a52b9d320b6b433da88ea1499d79f622',
+      // Not using Clerk anymore
       eas: {
         projectId: "1aeb71e2-edfe-4a20-81b2-6490ed422973"
       }
