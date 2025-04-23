@@ -25,13 +25,13 @@
         "prebuildCommand": "./eas-hooks/prebuild.sh"
       },
       "env": {
-        "EXPO_PUBLIC_SUPABASE_URL": "fallback_value_for_build",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "fallback_value_for_build",
-        "EXPO_PUBLIC_DEEPSEEK_API_KEY": "fallback_value_for_build",
-        "CLERK_PUBLISHABLE_KEY": "fallback_value_for_build"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://gffrwhbajzndpplxyyxi.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmZnJ3aGJhanpuZHBwbHh5eXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA0MTE1NTMsImV4cCI6MjAxNTk4NzU1M30.OoXqXGOI6uQVKDQ0ZEYxrRhHiBZhM5nDn7-9nIgNXCE",
+        "EXPO_PUBLIC_DEEPSEEK_API_KEY": "YOUR_DEEPSEEK_API_KEY", 
+        "CLERK_PUBLISHABLE_KEY": "YOUR_CLERK_KEY"
       },
       "cache": {
-        "key": "testflight-pods-v2"
+        "key": "testflight-pods-v3"
       }
     }
   },

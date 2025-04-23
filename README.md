@@ -84,13 +84,33 @@ The app has been updated with crash protection:
 
 ## Environment Variables
 
-The app gracefully handles missing variables in production, but for full functionality, set up:
+The app has a multi-layered approach to environment variables:
 
-```
-EXPO_PUBLIC_SUPABASE_URL=your-supabase-url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your-supabase-key
-EXPO_PUBLIC_DEEPSEEK_API_KEY=your-deepseek-key
-CLERK_PUBLISHABLE_KEY=your-clerk-key
-```
+1. **Development Environment**:
+   ```bash
+   # Set up local environment variables
+   npm run setup:env
+   
+   # This creates a .env file with default values
+   # Edit this file with your actual credentials if needed
+   ```
 
-In the EAS Dashboard for production builds.
+2. **TestFlight Builds**:
+   - Environment variables are directly set in `eas.json` in the "testflight" profile
+   - You can modify these in the `eas.json` file before building
+
+3. **Production Builds**:
+   - For maximum reliability, environment variables have hardcoded fallbacks in:
+     - `app/utils/env.ts` - Primary fallback values
+     - `eas.json` - EAS build-specific values
+     - `app.config.js` - Expo config values
+
+4. **Required Variables**:
+   ```
+   EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   EXPO_PUBLIC_DEEPSEEK_API_KEY=your-deepseek-key (if using DeepSeek)
+   CLERK_PUBLISHABLE_KEY=your-clerk-key (if using Clerk)
+   ```
+
+The app includes error handling and fallbacks for all environment variables to prevent crashes in production.

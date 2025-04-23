@@ -11,6 +11,7 @@
     "prebuild": "expo prebuild",
     "clean": "rm -rf ios/build ios/Pods node_modules",
     "postinstall": "cd ios && pod install && cd ..",
+    "setup:env": "./scripts/setup-env.sh",
     "fix:pods": "./scripts/fix-pods.sh",
     "patch:dc": "node ./scripts/patch-double-conversion.js",
     "prepare:ios": "./scripts/prepare-ios-build.sh",

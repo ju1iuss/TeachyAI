@@ -3,52 +3,58 @@ import { createClient } from '@supabase/supabase-js';
 import { errorLogger } from '../app/utils/errorLogger';
 import { env } from '../app/utils/env';
 
+// Debug environment variables in development
+if (__DEV__) {
+  console.log('Supabase Configuration:', {
+    URL: env.EXPO_PUBLIC_SUPABASE_URL ? `${env.EXPO_PUBLIC_SUPABASE_URL.substring(0, 12)}...` : 'Not set',
+    KEY: env.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set (hidden)' : 'Not set'
+  });
+}
+
 // Create a Supabase client with fallback handling
 let supabaseClient;
 
 try {
-  // Check if environment variables are available
-  if (!env.EXPO_PUBLIC_SUPABASE_URL || !env.EXPO_PUBLIC_SUPABASE_ANON_KEY) {
-    if (__DEV__) {
-      console.warn('Missing Supabase environment variables, using fallback client');
-    }
+  // Always use the environment variables (which now have proper fallbacks)
+  const supabaseUrl = env.EXPO_PUBLIC_SUPABASE_URL;
+  const supabaseKey = env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey || 
+      supabaseUrl === 'fallback_value_for_build' || 
+      supabaseKey === 'fallback_value_for_build' ||
+      supabaseUrl === 'YOUR_SUPABASE_URL' ||
+      supabaseKey === 'YOUR_SUPABASE_KEY') {
     
-    // In production/TestFlight, create a placeholder client that won't crash
-    // but will return appropriate errors when used
-    supabaseClient = createClient(
-      'https://placeholder-url.supabase.co',
-      'placeholder-key',
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: false,
-        },
-      }
-    );
-  } else {
-    // Create the real Supabase client with valid credentials
-    supabaseClient = createClient(
-      env.EXPO_PUBLIC_SUPABASE_URL,
-      env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: false,
-        },
-      }
-    );
+    throw new Error('Invalid Supabase credentials');
+  }
+  
+  // Create the Supabase client with the provided credentials
+  supabaseClient = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+    },
+  });
+  
+  if (__DEV__) {
+    console.log('Supabase client created successfully');
   }
 } catch (error) {
   // If client creation fails, log error and create a fallback client
+  if (__DEV__) {
+    console.error('Failed to create Supabase client:', error);
+  }
+  
   errorLogger.logError(error instanceof Error ? error : new Error(String(error)), {
     context: 'Supabase Client Initialization'
   });
   
+  // Create a fallback client that will show appropriate errors
+  // We'll use the values from env.ts which should have hardcoded fallbacks
   supabaseClient = createClient(
-    'https://placeholder-url.supabase.co',
-    'placeholder-key',
+    env.EXPO_PUBLIC_SUPABASE_URL || 'https://gffrwhbajzndpplxyyxi.supabase.co', 
+    env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmZnJ3aGJhanpuZHBwbHh5eXhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA0MTE1NTMsImV4cCI6MjAxNTk4NzU1M30.OoXqXGOI6uQVKDQ0ZEYxrRhHiBZhM5nDn7-9nIgNXCE',
     {
       auth: {
         persistSession: true,
