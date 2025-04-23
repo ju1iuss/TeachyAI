@@ -22,6 +22,7 @@ type AuthContextType = {
     } | null;
   }>;
   signOut: () => Promise<{ error: AuthError | null }>;
+  deleteAccount: () => Promise<{ error: Error | null }>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -145,6 +146,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Add delete account functionality
+  const deleteAccount = async () => {
+    try {
+      if (!user) {
+        throw new Error('No user logged in');
+      }
+      
+      // First delete user data from profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id);
+        
+      if (profileError) {
+        errorLogger.logError(profileError, { context: 'Auth: Delete Profile' });
+        return { error: profileError };
+      }
+      
+      // Then delete the user account
+      const { error } = await supabase.auth.admin.deleteUser(user.id);
+      
+      if (error) {
+        errorLogger.logError(error, { context: 'Auth: Delete User' });
+        return { error };
+      }
+      
+      // Sign out after successful deletion
+      await signOut();
+      
+      return { error: null };
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      errorLogger.logError(error, { context: 'Auth: Delete Account Exception' });
+      return { error };
+    }
+  };
+
   const value = {
     session,
     user,
@@ -152,6 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signIn,
     signOut,
+    deleteAccount,
   };
 
   return (

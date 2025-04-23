@@ -116,8 +116,11 @@ export default function RegisterScreen() {
         metadata: authData.user.user_metadata
       });
       
-      // Redirect directly to the main app since email confirmation is disabled
-      router.replace('/tabs');
+      // Redirect to verify screen since email confirmation is now enabled
+      router.push({
+        pathname: '/(auth)/verify',
+        params: { email }
+      });
       
     } catch (error) {
       console.error('Unexpected error:', error);

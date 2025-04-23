@@ -28,18 +28,27 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#F0F0F0',
+          borderTopWidth: 0,
           height: Platform.OS === 'ios' ? 100 : 80,
           paddingBottom: Platform.OS === 'ios' ? 25 : 16,
-          paddingTop: 12,
+          paddingTop: 16, // Increased padding top to move items up slightly
           position: 'absolute',
-          bottom: 0,
+          bottom: 0, // Attaches to the bottom of the screen
           left: 0,
           right: 0,
-          elevation: 0,
-          shadowOpacity: 0,
+          elevation: 5,
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
           zIndex: 1000,
+          borderTopLeftRadius: 25, // Only round the top corners
+          borderTopRightRadius: 25,
+          overflow: 'hidden',
+          // Extended to full width and height
+          width: '100%',
+          // Add extra bottom spacing to ensure the tab bar extends all the way to the bottom of the screen
+          marginBottom: -10, // This helps ensure the tab bar extends all the way down
         },
         tabBarShowLabel: true,
         tabBarActiveTintColor: '#000000',
@@ -54,7 +63,8 @@ export default function TabLayout() {
         },
         tabBarItemStyle: {
           paddingVertical: 8,
-          height: Platform.OS === 'ios' ? 65 : 55,
+          height: Platform.OS === 'ios' ? 60 : 50, // Reduced height to move items up
+          marginTop: -10, // Move tabs up more significantly
         },
       }}
       screenListeners={{

@@ -343,7 +343,7 @@ export default function LieblingsLehrerScreen() {
   return (
     <ScrollView 
       style={[styles.container]} 
-      contentContainerStyle={{ paddingBottom: insets.bottom }}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -356,7 +356,7 @@ export default function LieblingsLehrerScreen() {
       }
       showsVerticalScrollIndicator={false}
     >
-      <View style={[styles.header, { marginTop: insets.top + 40 }]}>
+      <View style={[styles.header, { marginTop: insets.top + 20 }]}>
         <Text style={styles.headline}>Lehrer News</Text>
         <View style={styles.headerIcons}>
           <Pressable onPress={handleShare} hitSlop={10}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Image, Pressable, TextInput, ScrollView, Share, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeInsets } from '../../utils/useSafeInsets';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { useState } from 'react';
 import { haptics } from '../../utils/haptics';
@@ -22,6 +23,7 @@ export type FormData = {
 
 export default function AIScreen() {
   const insets = useSafeAreaInsets();
+  const safeInsets = useSafeInsets(); // Custom hook that includes tab bar height
   const router = useRouter();
   const { signOut } = useAuth();
   const [showOptions, setShowOptions] = useState(false);
@@ -453,7 +455,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     justifyContent: 'space-between',
-    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
+    paddingBottom: 120, // Extra space to account for the tab bar
   },
   welcomeContainer: {
     flex: 1,
@@ -496,7 +498,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     paddingHorizontal: 16,
-    paddingBottom: Platform.OS === 'ios' ? 180 : 160,
+    paddingBottom: 180, // Extra space to account for footer and tab bar
   },
   optionsTitle: {
     fontSize: 18,
@@ -600,13 +602,13 @@ const styles = StyleSheet.create({
   footerButtons: {
     flexDirection: 'row',
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 100 : 80,
+    bottom: 120, // Position above the tab bar
     left: 0,
     right: 0,
     minHeight: 80,
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 16,
+    paddingBottom: 16,
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',

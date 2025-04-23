@@ -348,7 +348,7 @@ export default function FinanzLehrerScreen() {
   return (
     <ScrollView 
       style={[styles.container]} 
-      contentContainerStyle={{ paddingBottom: insets.bottom }}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -361,7 +361,7 @@ export default function FinanzLehrerScreen() {
       }
       showsVerticalScrollIndicator={false}
     >
-      <View style={[styles.header, { marginTop: insets.top + 40 }]}>
+      <View style={[styles.header, { marginTop: insets.top + 20 }]}>
         <Text style={styles.headline}>Finanz News</Text>
         <View style={styles.headerIcons}>
           <Pressable onPress={handleShare} hitSlop={10}>
@@ -775,4 +775,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-}); 
+});

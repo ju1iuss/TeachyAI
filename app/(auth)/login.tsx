@@ -12,9 +12,11 @@ export default function LoginScreen() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const signIn = async () => {
     setLoading(true);
+    setError(null);
     console.log('Attempting to sign in with:', identifier);
     
     try {
@@ -33,7 +35,16 @@ export default function LoginScreen() {
           status: error.status,
           name: error.name
         });
-        Alert.alert(error.message);
+        
+        // Set error message in German
+        if (error.message.includes('Invalid login credentials')) {
+          setError('Ungültige Anmeldedaten. Bitte überprüfe deine E-Mail/Telefonnummer und dein Passwort.');
+        } else if (error.message.includes('Email not confirmed')) {
+          setError('E-Mail-Adresse wurde noch nicht bestätigt. Bitte prüfe deinen Posteingang.');
+        } else {
+          setError('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+        }
+        
         setLoading(false);
         return;
       }
@@ -45,7 +56,7 @@ export default function LoginScreen() {
       router.replace('/tabs');
     } catch (error) {
       console.error('Unexpected error during sign in:', error);
-      Alert.alert('Ein unerwarteter Fehler ist aufgetreten');
+      setError('Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später erneut.');
       setLoading(false);
     }
   };
@@ -89,6 +100,10 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
+        {error && (
+          <Text style={styles.errorText}>{error}</Text>
+        )}
+        
         <Pressable 
           style={[styles.loginButton, loading && styles.loginButtonDisabled]}
           onPress={signIn}
@@ -115,6 +130,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 15,
+    fontWeight: '500',
+    marginTop: 8,
+    marginBottom: 12,
+    textAlign: 'center',
+    backgroundColor: 'rgba(255, 59, 48, 0.1)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    width: '100%',
   },
   backButton: {
     position: 'absolute',
